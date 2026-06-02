@@ -34,7 +34,11 @@ app.get("/users/:id", (req, res) => {
   }
 });
 
+//Edit a user by ID
 app.put("/users/:id", (req, res) => {
+  if (!req.body) {
+    return res.status(400).send("Request body is missing. Send JSON with Content-Type: application/json");
+  }
   const user = userData.find((u) => u.id === parseInt(req.params.id));
   if (!user) {
     return res.status(404).send("User not found");
@@ -43,6 +47,15 @@ app.put("/users/:id", (req, res) => {
   user.name = name;
   user.email = email;
   res.status(200).send(user);
+});
+
+app.delete("/users/:id", (req, res) => {
+  const userIndex = userData.findIndex((u) => u.id === parseInt(req.params.id));
+  if (userIndex === -1) {
+    return res.status(404).send("User not found");
+  }
+  userData.splice(userIndex, 1);
+  res.status(200).send("User deleted");
 });
 
 app.listen(port, () => {
